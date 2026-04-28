@@ -1,0 +1,14 @@
+db/data/*
+*/db/data/*
+../db/data/*
+/db/data/
+/db/data/*
+/vendor
+/node_modules
+/.env
+/public/storage
+/storage/*.key
+/bootstrap/cache/*
+*.log
+.idea
+.vscode
