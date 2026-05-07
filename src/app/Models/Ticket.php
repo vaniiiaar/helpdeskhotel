@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Ticket extends Model
+final class Ticket extends Model
 {
     protected $fillable = [
-        'ticket_code',
         'user_id',
+        'ticket_code',
         'room_number',
         'category',
         'priority',
@@ -17,7 +19,7 @@ class Ticket extends Model
         'status',
         'assigned_to',
         'report',
-        'photo',
+        'report_photo',
     ];
 
     public function user()

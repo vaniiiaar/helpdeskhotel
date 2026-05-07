@@ -4,106 +4,212 @@ namespace App\Http\Controllers;
 
 use App\Models\Ticket;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TicketController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // LIST TICKET
     public function index(Request $request)
     {
-        $query = Ticket::latest();
+        $query = Ticket::query();
+
+        // FILTER STATUS
         if ($request->status) {
-        $query->where('status', $request->status);
-        }
-        
-        $tickets = $query->get();
-        return view('tickets.index', compact('tickets'));
+
+            $query->where('status', $request->status);
+
         }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+        // USER hanya lihat ticket sendiri
+        if (auth()->user()->role === 'user') {
+
+            $query->where('user_id', auth()->id());
+
+        }
+
+        $tickets = $query->latest()->get();
+
+        return view('tickets.index', compact('tickets'));
+    }
+
+    // FORM CREATE
     public function create()
     {
         return view('tickets.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // DETAIL TICKET
+    public function show(Ticket $ticket)
+    {
+        return view('tickets.show', compact('ticket'));
+    }
+
+    // SIMPAN TICKET
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'room_number' => 'required|string|max:10',
-            'category' => 'required|string',
-            'priority' => 'required|in:Low,Medium,High',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+        $request->validate([
+
+            'room_number' => 'required',
+            'category'    => 'required',
+            'priority'    => 'required',
+            'title'       => 'required',
+            'description' => 'required',
+
         ]);
 
         Ticket::create([
-            'ticket_code' => 'TCK-' . time(),
-            'user_id' => Auth::id(),
-            'room_number' => $validated['room_number'],
-            'category' => $validated['category'],
-            'priority' => $validated['priority'],
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'status' => 'Open',
-            'assigned_to' => null,
+
+            'user_id' => auth()->id(),
+
+            'ticket_code' =>
+                'TCK-' . strtoupper(uniqid()),
+
+            'room_number' =>
+                $request->room_number,
+
+            'category' =>
+                $request->category,
+
+            'priority' =>
+                $request->priority,
+
+            'title' =>
+                $request->title,
+
+            'description' =>
+                $request->description,
+
+            'status' =>
+                'Open',
+
+            'assigned_to' =>
+                $request->assigned_to,
+
         ]);
 
-        return redirect()->route('tickets.index')
-            ->with('success', 'Ticket berhasil dibuat.');
+        return redirect()
+            ->route('tickets.index')
+            ->with('success', 'Ticket berhasil dibuat');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(Ticket $ticket)
     {
+        if (auth()->user()->role === 'user') {
+
+            abort(403);
+
+        }
         return view('tickets.edit', compact('ticket'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // UPDATE TICKET
     public function update(Request $request, Ticket $ticket)
     {
-        $data = $request->validate([
-            'room_number' => 'required|string|max:10',
-            'category' => 'required|string',
-            'priority' => 'required|in:Low,Medium,High',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'status' => 'required|in:Open,Process,Closed',
-            'assigned_to' => 'nullable|string',
-            'report' => 'nullable|string',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        if (auth()->user()->role === 'user') {
+            abort(403);
+        }
+        $request->validate([
+
+            'room_number' => 'required',
+            'category'    => 'required',
+            'priority'    => 'required',
+            'title'       => 'required',
+            'description' => 'required',
+            'status'      => 'required',
+
         ]);
 
-        // upload foto jika ada
+        // UPLOAD FOTO
         if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('tickets', 'public');
-            $data['photo'] = $path;
+
+            $photoPath = $request
+                ->file('photo')
+                ->store('reports', 'public');
+
+            $ticket->report_photo = $photoPath;
         }
 
-        $ticket->update($data);
+        $ticket->update([
 
-        return redirect()->route('tickets.index')
+            'room_number' =>
+                $request->room_number,
+
+            'category' =>
+                $request->category,
+
+            'priority' =>
+                $request->priority,
+
+            'title' =>
+                $request->title,
+
+            'description' =>
+                $request->description,
+
+            'status' =>
+                $request->status,
+
+            'assigned_to' =>
+                $request->assigned_to,
+
+            'report' =>
+                $request->report,
+
+        ]);
+
+        // SAVE FOTO
+        if ($request->hasFile('photo')) {
+
+            $ticket->save();
+
+        }
+
+        return redirect()
+            ->route('tickets.index')
             ->with('success', 'Ticket berhasil diupdate');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // DELETE
     public function destroy(Ticket $ticket)
     {
+        // hanya admin
+        if (auth()->user()->role !== 'admin') {
+
+            abort(403);
+
+        }
+
         $ticket->delete();
 
-        return redirect()->route('tickets.index')
-            ->with('success', 'Ticket berhasil dihapus.');
+        return redirect()
+            ->route('tickets.index')
+            ->with('success', 'Ticket berhasil dihapus');
+    }
+
+    // EXPORT SEMUA PDF
+    public function exportPdf()
+    {
+        $tickets = Ticket::all();
+
+        $pdf = Pdf::loadView(
+            'tickets.pdf',
+            compact('tickets')
+        );
+
+        return $pdf->download('tickets.pdf');
+    }
+
+    // EXPORT SINGLE PDF
+    public function exportSinglePdf(Ticket $ticket)
+    {
+        $pdf = Pdf::loadView(
+            'tickets.single-pdf',
+            compact('ticket')
+        );
+
+        return $pdf->download(
+            'ticket-' . $ticket->ticket_code . '.pdf'
+        );
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -11,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-final class AuthenticatedSessionController extends Controller
+class AuthenticatedSessionController extends Controller
 {
     /**
      * Display the login view.
@@ -26,11 +24,14 @@ final class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // AUTH LOGIN
         $request->authenticate();
 
+        // REGENERATE SESSION
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // REDIRECT KE DASHBOARD
+        return redirect()->route('dashboard');
     }
 
     /**

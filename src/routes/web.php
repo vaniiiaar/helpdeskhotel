@@ -1,25 +1,38 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketController;
-use App\Models\Ticket;  
+use App\Http\Controllers\DashboardController; // ✅ INI WAJIB
 
 Route::get('/', function () {
-    return redirect('/dashboard');
+    return redirect('/login');
 });
 
-Route::get('/dashboard', function () {
-    $totalTickets = Ticket::count();
-    $openTickets = Ticket::where('status', 'Open')->count();
-    $progressTickets = Ticket::where('status', 'Progress')->count();
-    $doneTickets = Ticket::where('status', 'Done')->count();
+// ✅ Dashboard pakai controller
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth'])
+    ->name('dashboard');
 
-    return view('dashboard', compact(
-        'totalTickets',
-        'openTickets',
-        'progressTickets',
-        'doneTickets'
-    ));
-})->name('dashboard');
+Route::get('/notifications', function () {
+    return \App\Models\Ticket::latest()->take(5)->get();
+})->middleware('auth');
 
-Route::resource('tickets', TicketController::class);
+// 🔐 Semua yang butuh login
+Route::middleware('auth')->group(function () {
+
+    Route::resource('tickets', TicketController::class);
+
+    Route::get('/tickets-export-pdf', [TicketController::class, 'exportPdf'])
+        ->name('tickets.export.pdf');
+
+    Route::get('/tickets/{ticket}/pdf', [TicketController::class, 'exportSinglePdf'])
+        ->name('tickets.export.single.pdf');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// auth bawaan
+require __DIR__.'/auth.php';

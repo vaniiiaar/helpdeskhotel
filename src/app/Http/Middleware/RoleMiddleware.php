@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -7,20 +9,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class RoleMiddleware
+final class RoleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     */
-    public function handle(Request $request, Closure $next, ...$roles): Response
+    public function handle(Request $request, Closure $next, string $role): Response
     {
-        // Jika user belum login
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('/login');
         }
 
-        // Jika role user tidak sesuai
-        if (!in_array(Auth::user()->role, $roles)) {
+        if (Auth::user()->role !== $role) {
             abort(403, 'Akses ditolak');
         }
 
