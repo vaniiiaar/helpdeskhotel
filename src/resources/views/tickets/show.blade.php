@@ -241,10 +241,47 @@
 
             </div>
 
+
         </div>
 
     </div>
+<hr class="my-4">
 
+<h4>Timeline Ticket</h4>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        @forelse($ticket->timelines as $timeline)
+
+            <div class="border-start border-4 border-primary ps-3 mb-3">
+
+                <h6 class="mb-1">
+
+                    {{ $timeline->activity }}
+
+                </h6>
+
+                <small class="text-muted">
+
+                    {{ $timeline->created_at->format('d M Y H:i') }}
+
+                </small>
+
+            </div>
+
+        @empty
+
+            <p class="text-muted">
+                Belum ada timeline
+            </p>
+
+        @endforelse
+
+    </div>
+
+</div>
 </div>
 
 @endsection

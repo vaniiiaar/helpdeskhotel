@@ -1,68 +1,249 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+# resources/views/auth/login.blade.php
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+```blade
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input
-                id="email"
-                class="mt-1 block w-full"
-                type="email"
-                name="email"
-                :value="old('email')"
-                required
-                autofocus
-                autocomplete="username"
-            />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Login - Helpdesk Hotel</title>
+
+    {{-- Bootstrap --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    {{-- Google Font --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        body {
+
+            font-family: 'Poppins', sans-serif;
+
+           
+            background:
+            linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+            url('{{ asset('images/hotelbg.jpg') }}');
+
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .login-card {
+
+            width: 100%;
+            max-width: 450px;
+
+            border: none;
+            border-radius: 20px;
+
+            background: rgba(255,255,255,0.95);
+
+            backdrop-filter: blur(10px);
+
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+
+            overflow: hidden;
+
+        }
+
+        .login-header {
+
+            background: #212529;
+            color: white;
+
+            padding: 35px 20px;
+
+            text-align: center;
+
+        }
+
+        .hotel-logo {
+
+            width: 180px;
+            height: auto;
+
+            object-fit: contain;
+
+            margin-bottom: 20px;
+
+        }
+
+        .welcome-title {
+
+            font-size: 28px;
+            font-weight: 700;
+
+            margin-bottom: 5px;
+
+        }
+
+        .welcome-subtitle {
+
+            font-size: 14px;
+            opacity: 0.8;
+
+        }
+
+        .login-body {
+
+            padding: 35px;
+
+        }
+
+        .form-control {
+
+            height: 50px;
+            border-radius: 12px;
+
+        }
+
+        .btn-login {
+
+            height: 50px;
+
+            border-radius: 12px;
+
+            font-weight: 600;
+
+            background: #212529;
+            border: none;
+
+            transition: 0.3s;
+
+        }
+
+        .btn-login:hover {
+
+            background: #000;
+
+            transform: translateY(-2px);
+
+        }
+
+        .footer-text {
+
+            text-align: center;
+            margin-top: 20px;
+
+            color: #777;
+            font-size: 13px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="login-card">
+
+        <div class="login-header">
+
+            <img src="{{ asset('images/logopullman.png') }}"
+                 class="hotel-logo"
+                 alt="Hotel Logo">
+
+            <div class="welcome-title">
+                Welcome Helpdesk
+            </div>
+
+            <div class="welcome-subtitle">
+                Internal Hotel Support System
+            </div>
+
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        {{-- BODY --}}
+        <div class="login-body">
 
-            <x-text-input
-                id="password"
-                class="mt-1 block w-full"
-                type="password"
-                name="password"
-                required
-                autocomplete="current-password"
-            />
+            {{-- ERROR --}}
+            @if ($errors->any())
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+                <div class="alert alert-danger">
 
-        <!-- Remember Me -->
-        <div class="mt-4 block">
-            <label for="remember_me" class="inline-flex items-center">
-                <input
-                    id="remember_me"
-                    type="checkbox"
-                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
-                    name="remember"
-                />
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+                    {{ $errors->first() }}
 
-        <div class="mt-4 flex items-center justify-end">
-            @if (Route::has('password.request'))
-                <a
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                    href="{{ route('password.request') }}"
-                >
-                    {{ __('Forgot your password?') }}
-                </a>
+                </div>
+
             @endif
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+            <form method="POST"
+                  action="{{ route('login') }}">
+
+                @csrf
+
+                {{-- EMAIL --}}
+                <div class="mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Email
+                    </label>
+
+                    <input type="email"
+                           name="email"
+                           class="form-control"
+                           placeholder="Masukkan email"
+                           required>
+
+                </div>
+
+                {{-- PASSWORD --}}
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+                        Password
+                    </label>
+
+                    <input type="password"
+                           name="password"
+                           class="form-control"
+                           placeholder="Masukkan password"
+                           required>
+
+                </div>
+
+                {{-- BUTTON LOGIN --}}
+                <button type="submit"
+                        class="btn btn-dark btn-login w-100">
+
+                    Login
+
+                </button>
+
+            </form>
+
+            {{-- FOOTER --}}
+            <div class="footer-text">
+
+                Helpdesk Hotel © {{ date('Y') }}
+
+            </div>
+
         </div>
-    </form>
-</x-guest-layout>
+
+    </div>
+
+</body>
+</html>

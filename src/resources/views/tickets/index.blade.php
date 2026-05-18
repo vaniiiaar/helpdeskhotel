@@ -4,6 +4,7 @@
 
 <div class="container">
 
+    {{-- HEADER --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <h2 class="fw-bold">
@@ -12,6 +13,7 @@
 
         <div class="d-flex gap-2">
 
+            {{-- USER / ADMIN / STAFF BOLEH BUAT --}}
             <a href="{{ route('tickets.create') }}"
                class="btn btn-primary">
 
@@ -19,6 +21,7 @@
 
             </a>
 
+            {{-- EXPORT PDF --}}
             <a href="{{ route('tickets.export.pdf') }}"
                class="btn btn-success">
 
@@ -30,7 +33,7 @@
 
     </div>
 
-    {{-- SUCCESS --}}
+    {{-- ALERT SUCCESS --}}
     @if(session('success'))
 
         <div class="alert alert-success">
@@ -41,7 +44,7 @@
 
     @endif
 
-    {{-- FILTER --}}
+    {{-- FILTER STATUS --}}
     <form method="GET"
           class="mb-3">
 
@@ -96,7 +99,7 @@
                         <th>Judul</th>
                         <th>Status</th>
                         <th>Assigned</th>
-                        <th width="250">Aksi</th>
+                        <th width="300">Aksi</th>
 
                     </tr>
 
@@ -108,18 +111,28 @@
 
                         <tr>
 
+                            {{-- KODE --}}
                             <td>
+
                                 {{ $ticket->ticket_code }}
+
                             </td>
 
+                            {{-- ROOM --}}
                             <td>
+
                                 {{ $ticket->room_number }}
+
                             </td>
 
+                            {{-- CATEGORY --}}
                             <td>
+
                                 {{ $ticket->category }}
+
                             </td>
 
+                            {{-- PRIORITY --}}
                             <td>
 
                                 @if($ticket->priority == 'High')
@@ -144,10 +157,14 @@
 
                             </td>
 
+                            {{-- TITLE --}}
                             <td>
+
                                 {{ $ticket->title }}
+
                             </td>
 
+                            {{-- STATUS --}}
                             <td>
 
                                 @if($ticket->status == 'Open')
@@ -172,26 +189,35 @@
 
                             </td>
 
+                            {{-- ASSIGNED --}}
                             <td>
 
                                 {{ $ticket->assigned_to ?? '-' }}
 
                             </td>
 
-                            <td class="d-flex gap-2">
+                            {{-- AKSI --}}
+                            <td class="d-flex gap-2 flex-wrap">
+
+                                {{-- DETAIL --}}
                                 <a href="{{ route('tickets.show', $ticket->id) }}"
-                                class="btn btn-sm btn-info text-white"> 
-                                Detail
+                                   class="btn btn-sm btn-info text-white">
+
+                                    Detail
+
                                 </a>
 
                                 {{-- EDIT --}}
                                 @if(auth()->user()->role !== 'user')
-                            <a href="{{ route('tickets.edit', $ticket->id) }}"
-                                class="btn btn-sm btn-outline-primary">
-                                
-                                Edit
-                            </a>
-                            @endif
+
+                                    <a href="{{ route('tickets.edit', $ticket->id) }}"
+                                       class="btn btn-sm btn-outline-primary">
+
+                                        Edit
+
+                                    </a>
+
+                                @endif
 
                                 {{-- PDF --}}
                                 <a href="{{ route('tickets.export.single.pdf', $ticket->id) }}"
@@ -201,22 +227,26 @@
 
                                 </a>
 
-                                {{-- DELETE --}}
+                                {{-- DELETE ADMIN ONLY --}}
                                 @if(auth()->user()->role === 'admin')
 
-                                <form action="{{ route('tickets.destroy', $ticket->id) }}"
-                                    method="POST">
+                                    <form action="{{ route('tickets.destroy', $ticket->id) }}"
+                                          method="POST">
 
-                                    @csrf
-                                    @method('DELETE')
+                                        @csrf
+                                        @method('DELETE')
 
-                                    <button class="btn btn-sm btn-outline-danger">
-                                        Hapus
-                                    </button>
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Hapus ticket ini?')">
 
-                                </form>
+                                            Hapus
 
-@endif
+                                        </button>
+
+                                    </form>
+
+                                @endif
 
                             </td>
 

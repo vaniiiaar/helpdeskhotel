@@ -23,12 +23,14 @@
 
         <div class="container">
 
-            {{-- LOGO --}}
-            <a class="navbar-brand fw-bold"
-               href="{{ route('dashboard') }}">
-
-                Helpdesk Hotel
-
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2"
+            href="{{ route('dashboard') }}">
+                <img src="{{ asset('images/logopullman.png') }}"
+                alt="Logo"
+                style="height:40px; width:auto;">
+                <span>
+                    Helpdesk Hotel
+                </span>
             </a>
 
             <div class="d-flex align-items-center gap-3">

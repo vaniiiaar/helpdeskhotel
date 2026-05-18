@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\TicketTimeline;
 
 class TicketController extends Controller
 {
@@ -57,7 +58,7 @@ class TicketController extends Controller
 
         ]);
 
-        Ticket::create([
+        $ticket = Ticket::create([
 
             'user_id' => auth()->id(),
 
@@ -87,12 +88,23 @@ class TicketController extends Controller
 
         ]);
 
+        // TIMELINE CREATE
+        TicketTimeline::create([
+
+            'ticket_id' => $ticket->id,
+
+            'activity' =>
+                'Ticket dibuat oleh ' .
+                auth()->user()->name,
+
+        ]);
+
         return redirect()
             ->route('tickets.index')
             ->with('success', 'Ticket berhasil dibuat');
     }
 
-
+    // EDIT
     public function edit(Ticket $ticket)
     {
         if (auth()->user()->role === 'user') {
@@ -100,6 +112,7 @@ class TicketController extends Controller
             abort(403);
 
         }
+
         return view('tickets.edit', compact('ticket'));
     }
 
@@ -107,8 +120,11 @@ class TicketController extends Controller
     public function update(Request $request, Ticket $ticket)
     {
         if (auth()->user()->role === 'user') {
+
             abort(403);
+
         }
+
         $request->validate([
 
             'room_number' => 'required',
@@ -127,7 +143,7 @@ class TicketController extends Controller
                 ->file('photo')
                 ->store('reports', 'public');
 
-            $ticket->report_photo = $photoPath;
+            $ticket->photo = $photoPath;
         }
 
         $ticket->update([
@@ -164,6 +180,19 @@ class TicketController extends Controller
             $ticket->save();
 
         }
+
+        // TIMELINE UPDATE
+        TicketTimeline::create([
+
+            'ticket_id' => $ticket->id,
+
+            'activity' =>
+                'Ticket diupdate menjadi status ' .
+                $request->status .
+                ' oleh ' .
+                auth()->user()->name,
+
+        ]);
 
         return redirect()
             ->route('tickets.index')
