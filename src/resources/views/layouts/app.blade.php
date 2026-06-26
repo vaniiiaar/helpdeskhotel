@@ -90,7 +90,6 @@
         @yield('content')
     </div>
 
-    {{-- AUDIO NOTIFIKASI --}}
     <audio id="notifSound">
         <source src="{{ asset('sounds/notif.mp3') }}" type="audio/mpeg">
     </audio>
@@ -105,9 +104,14 @@
          NOTIFICATION SCRIPTS
     ============================================================ --}}
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
+        // Unlock audio context saat user pertama interaksi
+        document.addEventListener('click', function() {
             const sound = document.getElementById('notifSound');
+            sound.play().then(() => {
+                sound.pause();
+                sound.currentTime = 0;
+            }).catch(() => {});
+        }, { once: true });
 
             // ============================================================
             // FLASH NOTIFICATIONS (setelah action)
