@@ -2,121 +2,67 @@
 
 @section('content')
 
-<div class="container">
+<div class="container-fluid">
 
-    {{-- HEADER --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    {{-- WELCOME --}}
+    <div class="card border-0 shadow-lg mb-4"
+         style="border-radius:20px;
+                background:linear-gradient(135deg,#0f172a,#1e293b);
+                color:white;">
 
-        <div>
-            <h2 class="fw-bold mb-1">
-                Dashboard Helpdesk Hotel
-            </h2>
+        <div class="card-body p-5">
 
-            <p class="text-muted mb-0">
-                Selamat datang,
-                <strong>{{ auth()->user()->name }}</strong>
-            </p>
-        </div>
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
 
-        <div>
-            @if(auth()->user()->role === 'admin')
+                <div>
 
-                <span class="badge bg-danger fs-6">
-                    ADMIN
-                </span>
+                    <h2 class="fw-bold mb-2">
 
-            @elseif(auth()->user()->role === 'staff')
+                        Welcome Back,
+                        {{ auth()->user()->name }}
 
-                <span class="badge bg-warning text-dark fs-6">
-                    STAFF
-                </span>
+                    </h2>
 
-            @else
+                    <p class="mb-0 opacity-75">
 
-                <span class="badge bg-primary fs-6">
-                    USER
-                </span>
+                        Pullman Jakarta Central Park
+                        Internal Helpdesk System
 
-            @endif
-        </div>
+                    </p>
 
-    </div>
+                    <div class="mt-3">
 
-    {{-- CARD STATISTIK --}}
-    <div class="row g-3">
+                        @if(auth()->user()->role === 'admin')
 
-        <div class="col-md-3">
+                            <span class="badge bg-danger px-3 py-2">
+                                ADMIN
+                            </span>
 
-            <div class="card border-0 shadow-sm h-100">
+                        @elseif(auth()->user()->role === 'staff')
 
-                <div class="card-body text-center">
+                            <span class="badge bg-warning text-dark px-3 py-2">
+                                STAFF
+                            </span>
 
-                    <h6 class="text-muted">
-                        Total Ticket
-                    </h6>
+                        @else
 
-                    <h1 class="fw-bold">
-                        {{ $totalTickets }}
-                    </h1>
+                            <span class="badge bg-primary px-3 py-2">
+                                USER
+                            </span>
+
+                        @endif
+
+                    </div>
 
                 </div>
 
-            </div>
+                <div class="text-end">
 
-        </div>
+                    <h1 class="fw-bold opacity-25"
+                        style="font-size:70px;">
 
-        <div class="col-md-3">
+                        HELPDESK
 
-            <div class="card border-0 shadow-sm bg-danger text-white h-100">
-
-                <div class="card-body text-center">
-
-                    <h6>
-                        Open
-                    </h6>
-
-                    <h1 class="fw-bold">
-                        {{ $openTickets }}
-                    </h1>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <div class="card border-0 shadow-sm bg-warning text-dark h-100">
-
-                <div class="card-body text-center">
-
-                    <h6>
-                        Process
-                    </h6>
-
-                    <h1 class="fw-bold">
-                        {{ $processTickets }}
-                    </h1>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="col-md-3">
-
-            <div class="card border-0 shadow-sm bg-success text-white h-100">
-
-                <div class="card-body text-center">
-
-                    <h6>
-                        Closed
-                    </h6>
-
-                    <h1 class="fw-bold">
-                        {{ $closedTickets }}
                     </h1>
 
                 </div>
@@ -127,95 +73,218 @@
 
     </div>
 
-    {{-- TICKET TERBARU --}}
-    <div class="card border-0 shadow-sm mt-4">
+    {{-- QUICK ACTION --}}
+    <div class="row mb-4 g-3">
 
-        <div class="card-header bg-white">
+        <div class="col-md-4">
 
-            <h5 class="mb-0">
-                Ticket Terbaru
-            </h5>
+            <a href="{{ route('tickets.create') }}"
+               class="text-decoration-none">
+
+                <div class="card border-0 shadow-sm h-100">
+
+                    <div class="card-body text-center p-4">
+
+                        <h1>➕</h1>
+
+                        <h5 class="fw-bold">
+                            Create Ticket
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Buat ticket baru
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
 
         </div>
 
-        <div class="card-body p-0">
+        <div class="col-md-4">
 
-            <div class="table-responsive">
+            <a href="{{ route('tickets.index') }}"
+               class="text-decoration-none">
 
-                <table class="table table-hover mb-0">
+                <div class="card border-0 shadow-sm h-100">
 
-                    <thead class="table-light">
+                    <div class="card-body text-center p-4">
 
-                        <tr>
-                            <th>Kode</th>
-                            <th>Judul</th>
-                            <th>Status</th>
-                            <th>Room</th>
-                        </tr>
+                        <h1>🎫</h1>
 
-                    </thead>
+                        <h5 class="fw-bold">
+                            View Tickets
+                        </h5>
 
-                    <tbody>
+                        <p class="text-muted mb-0">
+                            Lihat daftar ticket
+                        </p>
 
-                        @forelse ($latestTickets as $ticket)
+                    </div>
 
-                            <tr>
+                </div>
 
-                                <td>
-                                    {{ $ticket->ticket_code }}
-                                </td>
+            </a>
 
-                                <td>
-                                    {{ $ticket->title }}
-                                </td>
+        </div>
 
-                                <td>
+        <div class="col-md-4">
 
-                                    @if($ticket->status == 'Open')
+            <a href="{{ route('tickets.export.pdf') }}"
+               class="text-decoration-none">
 
-                                        <span class="badge bg-danger">
-                                            Open
-                                        </span>
+                <div class="card border-0 shadow-sm h-100">
 
-                                    @elseif($ticket->status == 'Process')
+                    <div class="card-body text-center p-4">
 
-                                        <span class="badge bg-warning text-dark">
-                                            Process
-                                        </span>
+                        <h1>📄</h1>
 
-                                    @else
+                        <h5 class="fw-bold">
+                            Export Report
+                        </h5>
 
-                                        <span class="badge bg-success">
-                                            Closed
-                                        </span>
+                        <p class="text-muted mb-0">
+                            Download laporan PDF
+                        </p>
 
-                                    @endif
+                    </div>
 
-                                </td>
+                </div>
 
-                                <td>
-                                    {{ $ticket->room_number }}
-                                </td>
+            </a>
 
-                            </tr>
+        </div>
 
-                        @empty
+    </div>
 
-                            <tr>
+    {{-- STATISTIC --}}
+    <div class="row g-4 mb-4">
 
-                                <td colspan="4" class="text-center py-4">
+        <div class="col-md-3">
 
-                                    Belum ada ticket
+            <div class="card border-0 shadow-sm">
 
-                                </td>
+                <div class="card-body p-4">
 
-                            </tr>
+                    <div class="d-flex justify-content-between">
 
-                        @endforelse
+                        <div>
 
-                    </tbody>
+                            <p class="text-muted mb-1">
+                                Total Ticket
+                            </p>
 
-                </table>
+                            <h2 class="fw-bold">
+                                {{ $totalTickets }}
+                            </h2>
+
+                        </div>
+
+                        <div style="font-size:40px;">
+                            🎫
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm bg-danger text-white">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <p class="mb-1">
+                                Open
+                            </p>
+
+                            <h2 class="fw-bold">
+                                {{ $openTickets }}
+                            </h2>
+
+                        </div>
+
+                        <div style="font-size:40px;">
+                            🚨
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm bg-warning text-dark">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <p class="mb-1">
+                                Process
+                            </p>
+
+                            <h2 class="fw-bold">
+                                {{ $processTickets }}
+                            </h2>
+
+                        </div>
+
+                        <div style="font-size:40px;">
+                            ⏳
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm bg-success text-white">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <p class="mb-1">
+                                Closed
+                            </p>
+
+                            <h2 class="fw-bold">
+                                {{ $closedTickets }}
+                            </h2>
+
+                        </div>
+
+                        <div style="font-size:40px;">
+                            ✅
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -223,69 +292,71 @@
 
     </div>
 
-    {{-- URGENT TICKET KHUSUS ADMIN & STAFF --}}
-    @if(auth()->user()->role !== 'user')
 
-    <div class="card border-0 shadow-sm mt-4">
+<div class="col-lg-4">
 
-        <div class="card-header bg-danger text-white">
+    <div class="card border-0 shadow-sm">
 
-            <h5 class="mb-0">
-                🔥 Ticket Prioritas Tinggi
+        <div class="card-header bg-danger text-white border-0 p-4">
+
+            <h5 class="fw-bold mb-0">
+                🔥 Urgent Ticket
             </h5>
 
         </div>
 
         <div class="card-body">
 
-            @forelse ($urgentTickets as $ticket)
+            @forelse($urgentTickets ?? [] as $ticket)
 
-                <div class="border-bottom pb-3 mb-3">
+                <div class="border rounded p-3 mb-3">
 
                     <div class="d-flex justify-content-between">
 
-                        <div>
+                        <strong>
+                            {{ $ticket->title }}
+                        </strong>
 
-                            <h6 class="mb-1 fw-bold">
-
-                                {{ $ticket->title }}
-
-                            </h6>
-
-                            <small class="text-muted">
-
-                                Room:
-                                {{ $ticket->room_number }}
-
-                            </small>
-
-                        </div>
-
-                        <div>
-
-                            @if($ticket->status == 'Open')
-
-                                <span class="badge bg-danger">
-                                    Open
-                                </span>
-
-                            @elseif($ticket->status == 'Process')
-
-                                <span class="badge bg-warning text-dark">
-                                    Process
-                                </span>
-
-                            @else
-
-                                <span class="badge bg-success">
-                                    Closed
-                                </span>
-
-                            @endif
-
-                        </div>
+                        <span class="badge bg-danger">
+                            HIGH
+                        </span>
 
                     </div>
+
+                    <small class="text-muted">
+
+                        Room:
+                        {{ $ticket->room_number }}
+
+                    </small>
+
+                    <br>
+
+                    <small>
+
+                        Status:
+
+                        @if($ticket->status == 'Open')
+
+                            <span class="text-danger">
+                                Open
+                            </span>
+
+                        @elseif($ticket->status == 'Process')
+
+                            <span class="text-warning">
+                                Process
+                            </span>
+
+                        @else
+
+                            <span class="text-success">
+                                Closed
+                            </span>
+
+                        @endif
+
+                    </small>
 
                 </div>
 
@@ -303,7 +374,7 @@
 
     </div>
 
-    @endif
+</div>
 
 </div>
 

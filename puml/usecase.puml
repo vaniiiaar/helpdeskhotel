@@ -1,0 +1,57 @@
+@startuml
+
+skinparam actorStyle awesome
+left to right direction
+
+actor "Staff Departemen" as Staff
+actor "IT Support" as IT
+actor "Administrator" as Admin
+actor "Management" as Manager
+
+rectangle "Sistem Helpdesk Internal Hotel" {
+
+    usecase "Login" as UC1
+    usecase "Logout" as UC2
+
+    usecase "Buat Ticket" as UC3
+    usecase "Lihat Status Ticket" as UC4
+    usecase "Lihat Riwayat Ticket" as UC5
+
+    usecase "Lihat Ticket Masuk" as UC6
+    usecase "Ambil Ticket" as UC7
+    usecase "Update Status Ticket" as UC8
+    usecase "Tambah Progress" as UC9
+    usecase "Upload Bukti Penyelesaian" as UC10
+
+    usecase "Kelola User" as UC11
+    usecase "Kelola Departemen" as UC12
+    usecase "Kelola Prioritas" as UC13
+
+    usecase "Dashboard Monitoring" as UC14
+    usecase "Laporan Ticket" as UC15
+}
+
+Staff --> UC1
+Staff --> UC2
+Staff --> UC3
+Staff --> UC4
+Staff --> UC5
+
+IT --> UC1
+IT --> UC2
+IT --> UC6
+IT --> UC7
+IT --> UC8
+IT --> UC9
+IT --> UC10
+
+Admin --> UC11
+Admin --> UC12
+Admin --> UC13
+Admin --> UC14
+Admin --> UC15
+
+Manager --> UC14
+Manager --> UC15
+
+@enduml
